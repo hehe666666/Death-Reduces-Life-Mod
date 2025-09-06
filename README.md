@@ -1,4 +1,3 @@
-ËÀÍö¼õÉÙÉúÃüÖµ
-ÕâÊÇÒ»¸öÔÚËÀÍöÊ±¼õÉÙ2µã×î´óÉúÃüÖµ¹¦ÄÜµÄMinecraft Mod¡£
-°²×°·½·¨£º°Ñ.jarÎÄ¼þ·Å½ømodsÎÄ¼þ¼Ð¡£
-×÷Õß£ºliuge
+æ­»äº¡å‡å°‘ç”Ÿå‘½å€¼
+è¿™æ˜¯ä¸€ä¸ªåœ¨æ­»äº¡æ—¶å‡å°‘2ç‚¹æœ€å¤§ç”Ÿå‘½å€¼åŠŸèƒ½çš„Minecraft Modã€‚
+å®‰è£…æ–¹æ³•ï¼šæŠŠ.jaræ–‡ä»¶æ”¾è¿›modsæ–‡ä»¶å¤¹ã€‚
