@@ -1,9 +1,9 @@
 [
   {
     "modid": "deathpenalty",
-    "name": "死亡减少生命值",
+    "name": "Death Reduces Life Mod",
     "description": "玩家每死亡一次，最大生命值就会减少1颗心。",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "mcversion": "1.20.1",
     "logoFile": "logo.png",
     "authors": "liuge",
