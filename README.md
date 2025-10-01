@@ -2,6 +2,8 @@
 
 Death reduces health. This is a Minecraft Mod that reduces maximum health by 2 points upon death. After version 1.1.0, **save will be deleted** when the maximum health is 0
 
+**如果您的存档因本模组被删除，本模组作者概不负责。**
 **If your save is deleted due to this mod, the mod author is not responsible.**
+
 
 
