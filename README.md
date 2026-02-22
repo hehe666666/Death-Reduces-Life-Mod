@@ -47,7 +47,10 @@ A Minecraft mod that adds death penalty mechanics to the game.
 When the mod starts for the first time, it will generate a `deathreduceslife.toml` file in the `config` directory with the following content:
 
 ```toml
-deleteSave = true （Default） or
+deleteSave = true （Default） 
+```
+or
+```toml
 deleteSave = false
 ```
 
@@ -61,6 +64,7 @@ deleteSave = false
 - **Health Limit**:
   - When `deleteSave = true`, minimum can drop to 0 (save deleted at this point)
   - When `deleteSave = false`, minimum keeps 1 point (save not deleted)
+
 
 
 
