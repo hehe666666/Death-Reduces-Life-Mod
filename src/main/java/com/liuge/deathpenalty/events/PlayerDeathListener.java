@@ -37,46 +37,6 @@ public class PlayerDeathListener {
     public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             LOGGER.info("[欢迎] 玩家登录: " + player.getName().getString());
-
-            // 获取玩家持久化数据
-            CompoundTag rootTag = player.getPersistentData();
-            CompoundTag persistedTag = rootTag.getCompound(PERSISTED_KEY);
-
-            // 检查玩家是否选择不再显示欢迎消息
-            boolean dontShowAgain = persistedTag.contains(DONT_SHOW_AGAIN_KEY) &&
-                    persistedTag.getBoolean(DONT_SHOW_AGAIN_KEY);
-
-            LOGGER.info("[欢迎] 玩家是否选择不再显示: " + dontShowAgain);
-            LOGGER.info("[欢迎] 配置是否显示欢迎消息: " + DeathPenaltyConfig.COMMON.showWelcomeMessage.get());
-
-            if (DeathPenaltyConfig.COMMON.showWelcomeMessage.get() && !dontShowAgain) {
-                // 发送欢迎消息和可点击选项
-                String title = DeathPenaltyConfig.COMMON.welcomeMessageTitle.get();
-                String message = DeathPenaltyConfig.COMMON.welcomeMessage.get();
-
-                player.sendSystemMessage(Component.literal("§6§l" + title));
-
-                // 分割多行消息
-                String[] lines = message.split("\\\\n");
-                for (String line : lines) {
-                    player.sendSystemMessage(Component.literal(line));
-                }
-
-                // 添加可点击的选项
-                player.sendSystemMessage(Component.literal("§a[确定] §7- 点击继续游戏")
-                        .withStyle(style -> style.withClickEvent(new net.minecraft.network.chat.ClickEvent(
-                                net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND,
-                                "/deathpenalty welcome confirm"
-                        ))));
-
-                player.sendSystemMessage(Component.literal("§c[下次不再提示] §7- 点击并不再显示此消息")
-                        .withStyle(style -> style.withClickEvent(new net.minecraft.network.chat.ClickEvent(
-                                net.minecraft.network.chat.ClickEvent.Action.RUN_COMMAND,
-                                "/deathpenalty welcome dontshowagain"
-                        ))));
-
-                LOGGER.info("[欢迎] 已向玩家 " + player.getName().getString() + " 显示欢迎信息和选项");
-            }
         }
     }
 
@@ -117,10 +77,15 @@ public class PlayerDeathListener {
             // 更新当前最大生命值
             player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(newMaxHealth);
 
+            // 检查配置是否启用删除存档功能
+            boolean shouldDeleteSave = DeathPenaltyConfig.COMMON.deleteSave.get();
+            
             // 最大生命值为0时：踢出并标记删除整个存档
-            if (newMaxHealth <= 0) {
+            if (newMaxHealth <= 0 && shouldDeleteSave) {
                 String playerName = player.getName().getString();
                 MinecraftServer server = player.getServer();
+
+                LOGGER.info("[死亡] 配置删除存档: " + shouldDeleteSave);
 
                 // 存储服务器实例供后续使用
                 serverInstance = server;
@@ -155,7 +120,13 @@ public class PlayerDeathListener {
                     }
                 }
             } else {
+                // 当 deleteSave 为 false 时，即使生命值降至最低值也不踢出玩家
                 player.sendSystemMessage(Component.literal("死亡惩罚：最大生命值变为 " + newMaxHealth));
+                
+                if (newMaxHealth <= 1.0D && !shouldDeleteSave) {
+                    player.sendSystemMessage(Component.literal("§c警告：你的最大生命值已降至最低！"));
+                    LOGGER.info("[死亡] 玩家 " + player.getName().getString() + " 生命值已降至最低，配置禁用了删除存档功能");
+                }
             }
         }
     }
@@ -274,4 +245,3 @@ public class PlayerDeathListener {
         });
     }
 }//666这个bug终于修好了,666修好又出新bug了
-

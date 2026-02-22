@@ -18,7 +18,7 @@ public class DeathPenaltyMod {
 
     public DeathPenaltyMod() {
         // 注册配置
-        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, DeathPenaltyConfig.COMMON_SPEC, "deathpenalty.toml");
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, DeathPenaltyConfig.COMMON_SPEC, "deathreduceslife.toml");
 
         // 注册事件监听器
         MinecraftForge.EVENT_BUS.register(this);

@@ -5,10 +5,10 @@ showAsResourcePack=false
 
 [[mods]]
 modId="deathpenalty"
-version="1.1.0"
+version="1.1.1"
 displayName="Death Reduces Life Mod"
 authors="liuge"
-description="玩家每死亡一次，最大生命值就会减少1颗心。"
+description="玩家每死亡一次，最大生命值就会减少1颗心。如果您的存档因本模组被删除，本模组作者概不负责。"
 logoFile="logo.png"
 
 [[dependencies.deathpenalty]]
