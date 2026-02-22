@@ -13,7 +13,8 @@
 模组首次启动时会在 `config` 目录生成 `deathreduceslife.toml` 文件，内容如下：
 
 ```toml
-deleteSave = true 或 deleteSave = false
+deleteSave = true 或
+deleteSave = false
 ```
 
 - `deleteSave = true`：当生命值降至 0 时，删除存档
@@ -44,7 +45,8 @@ A Minecraft mod that adds death penalty mechanics to the game.
 When the mod starts for the first time, it will generate a `deathreduceslife.toml` file in the `config` directory with the following content:
 
 ```toml
-deleteSave = true or deleteSave = false
+deleteSave = true or
+deleteSave = false
 ```
 
 - `deleteSave = true`: Delete save when health reaches 0
@@ -57,3 +59,4 @@ deleteSave = true or deleteSave = false
 - **Health Limit**:
   - When `deleteSave = true`, minimum can drop to 0 (save deleted at this point)
   - When `deleteSave = false`, minimum keeps 1 point (save not deleted)
+
