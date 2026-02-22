@@ -5,7 +5,7 @@
 ## 功能特性
 
 - **死亡惩罚**：玩家每死亡一次，最大生命值减少 2 点
-- **存档保护**：可配置是否在生命值耗尽时删除存档
+- **配置功能**：可配置是否在生命值耗尽时删除存档
 - **灵活配置**：通过简单的配置文件控制模组行为
 
 ## 配置说明
@@ -13,10 +13,12 @@
 模组首次启动时会在 `config` 目录生成 `deathreduceslife.toml` 文件，内容如下：
 
 ```toml
-deleteSave = true （默认） 或
+deleteSave = true （默认） 
+```
+或
+```toml
 deleteSave = false
 ```
-
 - `deleteSave = true`：当生命值降至 0 时，删除存档
 - `deleteSave = false`：当生命值降至 1 时停止减少，保留玩家生命
 
@@ -59,5 +61,6 @@ deleteSave = false
 - **Health Limit**:
   - When `deleteSave = true`, minimum can drop to 0 (save deleted at this point)
   - When `deleteSave = false`, minimum keeps 1 point (save not deleted)
+
 
 
