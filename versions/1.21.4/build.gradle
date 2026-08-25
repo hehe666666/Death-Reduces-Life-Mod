@@ -1,0 +1,12 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '[7.0.3,8)'
+}
+
+apply from: rootProject.file('../../gradle/mod-common.gradle')
+
+minecraft {
+    // 跳过 Mavenizer 的 Vineflower 反编译步骤（单次约 10-15 分钟、无进度输出、易被误判卡死）。
+    // 需要 IDE 源码附加 / javadoc 时，删除此行并让反编译完整跑一次即可（缓存后不再重复）。
+    mavenizerArguments.add('--disable-decompile')
+}

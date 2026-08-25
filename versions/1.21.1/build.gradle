@@ -1,0 +1,18 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '[7.0.3,8)'
+}
+
+// ===== 阿里云镜像（放在 plugins 块之后，为项目级依赖解析生效）=====
+repositories {
+    maven {
+        url = "https://maven.aliyun.com/repository/public"
+    }
+    // 备选：如果阿里云缺少某些文件，可以保留官方源
+    maven {
+        url = "https://maven.minecraftforge.net/"
+    }
+    mavenCentral()
+}
+
+apply from: rootProject.file('../../gradle/mod-common.gradle')

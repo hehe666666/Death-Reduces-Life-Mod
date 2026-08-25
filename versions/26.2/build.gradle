@@ -1,0 +1,9 @@
+plugins {
+    id 'java'
+    id 'net.minecraftforge.gradle' version '[7.0.17,8)'
+}
+
+minecraft {
+    mavenizerArguments.add('--disable-decompile')
+}
+apply from: rootProject.file('../../gradle/mod-common.gradle')
