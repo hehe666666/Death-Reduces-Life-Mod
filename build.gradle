@@ -1,6 +1,55 @@
-plugins {
-    id 'java'
-    id 'net.minecraftforge.gradle' version '[6.0.46,6.2)'
+// Root project: this is only a coordinator. Each supported Minecraft version is built by its own
+// standalone Gradle build under versions/<mc>/ (they need different Gradle + ForgeGradle versions).
+// Run `gradlew buildAll` (or `build-all.bat`) to build the mod for every supported version.
+
+def supportedVersions = [
+        '1.20', '1.20.1', '1.20.2', '1.20.4', '1.20.6',
+        '1.21', '1.21.1', '1.21.4', '1.21.5', '1.21.8', '1.21.10', '1.21.11',
+        '26.1', '26.1.2', '26.2'
+]
+
+tasks.register('buildAll') {
+    group = 'build'
+    description = 'Builds the mod for every supported Minecraft version, reusing Gradle daemons (fast).'
+    doLast {
+        buildEach(['build'])
+    }
 }
 
-apply from: rootProject.file('../../gradle/mod-common.gradle')
+tasks.register('buildAllDaemon') {
+    group = 'build'
+    description = 'Alias of buildAll - daemons are enabled by default now.'
+    doLast {
+        buildEach(['build'])
+    }
+}
+
+tasks.register('buildAllNoDaemon') {
+    group = 'build'
+    description = 'Builds every supported version with --no-daemon, for CI / one-shot runs.'
+    doLast {
+        buildEach(['build', '--no-daemon'])
+    }
+}
+
+tasks.register('cleanAll') {
+    group = 'build'
+    description = 'Cleans all per-version build outputs.'
+    doLast {
+        buildEach(['clean', '--no-daemon'])
+    }
+}
+
+ext.buildEach = { List<String> args ->
+    def onWindows = System.getProperty('os.name').toLowerCase().contains('windows')
+    supportedVersions.each { v ->
+        def dir = file("versions/$v")
+        def script = onWindows ? new File(dir, 'gradlew.bat') : new File(dir, 'gradlew')
+        logger.lifecycle("")
+        logger.lifecycle("==== Building Minecraft ${v} ====")
+        exec {
+            workingDir dir
+            commandLine script.absolutePath, *args
+        }
+    }
+}
