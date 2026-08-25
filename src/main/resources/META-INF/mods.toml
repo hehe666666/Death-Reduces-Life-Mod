@@ -1,11 +1,11 @@
 modLoader="javafml"
-loaderVersion="[47,)"
+loaderVersion="${loader_version_range}"
 license="MIT"
 showAsResourcePack=false
 
 [[mods]]
 modId="deathpenalty"
-version="1.1.1"
+version="${mod_version}"
 displayName="Death Reduces Life Mod"
 authors="liuge"
 description="玩家每死亡一次，最大生命值就会减少1颗心。如果您的存档因本模组被删除，本模组作者概不负责。"
@@ -14,6 +14,6 @@ logoFile="logo.png"
 [[dependencies.deathpenalty]]
 modId="forge"
 mandatory=true
-versionRange="[47,)"
+versionRange="${forge_version_range}"
 ordering="NONE"
 side="BOTH"
