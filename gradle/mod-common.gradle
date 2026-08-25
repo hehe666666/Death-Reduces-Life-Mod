@@ -1,0 +1,170 @@
+// gradle/mod-common.gradle
+// Shared build configuration applied by every per-version build (versions/<mc>/build.gradle).
+// It is applied AFTER the net.minecraftforge.gradle plugin is applied by the version build script.
+
+def prop = { String name -> project.findProperty(name) }
+
+// ----- 全局镜像加速（优先级最高）-----
+repositories {
+    // BMCLAPI 镜像（Maven 仓库，用于依赖）
+    maven {
+        name = "BMCLAPI Maven"
+        url = "https://bmclapi2.bangbang93.com/maven"
+    }
+    // 阿里云公共仓库（国内加速 Maven 依赖）
+    maven {
+        name = "Aliyun"
+        url = "https://maven.aliyun.com/repository/public"
+    }
+    // Forge 官方仓库（必须保留）
+    maven {
+        name = "Forge"
+        url = "https://maven.minecraftforge.net/"
+    }
+}
+
+version = prop('mod_version')
+group = prop('mod_group_id')
+
+base {
+    archivesName = "death-reduces-life-mod-${prop('minecraft_version')}"
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(prop('java_version') as int)
+
+// Shared sources live at the repository root, outside this version subproject.
+sourceSets {
+    main {
+        java.srcDirs = [
+                rootProject.file('../../src/main/java'),
+                rootProject.file("../../src/${prop('era')}/java")
+        ]
+        resources.srcDirs = [rootProject.file('../../src/main/resources')]
+    }
+}
+
+if (prop('forge_gradle_major') == '6') {
+    // ------- ForgeGradle 6 (Minecraft 1.20 - 1.20.4) -------
+    minecraft {
+        mappings channel: 'official', version: "${prop('mapping_version')}"
+
+        runs {
+            configureEach {
+                workingDirectory project.file('run')
+
+                property 'forge.logging.markers', 'REGISTRIES'
+                property 'forge.logging.console.level', 'debug'
+
+                mods {
+                    "${prop('mod_id')}" {
+                        source sourceSets.main
+                    }
+                }
+            }
+
+            client {
+                property 'forge.enabledGameTestNamespaces', prop('mod_id')
+            }
+
+            server {
+                property 'forge.enabledGameTestNamespaces', prop('mod_id')
+                args '--nogui'
+            }
+        }
+    }
+
+    dependencies {
+        minecraft "net.minecraftforge:forge:${prop('minecraft_version')}-${prop('forge_version')}"
+    }
+
+    tasks.named('jar', Jar).configure {
+        finalizedBy 'reobfJar'
+    }
+} else {
+    // ------- ForgeGradle 7 (Minecraft 1.20.6 and newer) -------
+    minecraft {
+        runs {
+            configureEach {
+                workingDir = layout.projectDirectory.dir('run')
+            }
+
+            register('client')
+
+            register('server') {
+                args '--nogui'
+            }
+        }
+    }
+
+    // 26.x and newer are fully unobfuscated and do not need a mappings block.
+    if (project.hasProperty('mapping_version') && prop('mapping_version')) {
+        minecraft {
+            mappings channel: 'official', version: prop('mapping_version')
+            mavenizerArguments.add('--disable-decompile')
+        }
+    }
+
+    // ----- 为 ForgeGradle 7 额外添加仓库（确保镜像最优先）-----
+    repositories {
+        // 【关键】BMCLAPI 的 /libraries 路径，专门用于 Minecraft 库文件（服务端 JAR 等）
+        maven {
+            name = "BMCLAPI Libraries"
+            url = "https://bmclapi2.bangbang93.com/libraries"
+        }
+        // BMCLAPI Maven 仓库（用于依赖）
+       // maven {
+         //   name = "BMCLAPI Maven"
+           // url = "https://bmclapi2.bangbang93.com/maven"
+     //   }
+        // 阿里云公共仓库（加速 Maven 依赖）
+        maven {
+            name = "Aliyun"
+            url = "https://maven.aliyun.com/repository/public"
+        }
+        // ForgeGradle 提供的内部仓库方法（必须保留）
+        minecraft.mavenizer(it)
+        maven fg.forgeMaven
+        maven fg.minecraftLibsMaven
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation minecraft.dependency("net.minecraftforge:forge:${prop('minecraft_version')}-${prop('forge_version')}")
+    }
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    def replaceProperties = [
+            minecraft_version  : prop('minecraft_version'),
+            mod_version        : prop('mod_version'),
+            loader_version_range: prop('loader_version_range'),
+            forge_version_range: prop('forge_version_range'),
+            pack_description   : prop('pack_description'),
+            pack_format_field  : prop('pack_format_field')
+    ]
+    // Capture the project reference at configuration time: calling Task.project
+    // during execution is deprecated in Gradle 9 and will fail in Gradle 10.
+    def projectRef = project
+    inputs.properties replaceProperties
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta', 'mcmod.info']) {
+        expand replaceProperties + [project: projectRef]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'     : prop('mod_id'),
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : prop('mod_version'),
+                'Implementation-Vendor'   : prop('mod_authors'),
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
